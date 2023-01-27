@@ -1,0 +1,30 @@
+{
+    "usuarios": [
+        {
+            "id": "511d3342-4ffa-4a69-9da3-9cbbebc52773",
+            "nome": "Galadriel"
+        },
+        {
+            "id": "5f2fc69f-490f-4c87-8479-77f5d92c4d89",
+            "nome": "Mikey Walsh"
+        },
+        {
+            "id": "0e317fa1-c15d-4d3b-a6d2-db7a37f6933c",
+            "nome": "Luke Skywalker"
+        }
+    ],
+    "departamentos": [
+        {
+            "id": "2640c998-cfff-48e3-920b-139fa396a406",
+            "descricao": "Alfa"
+        },
+        {
+            "id": "10dfb892-b8ab-468f-85a6-3e91a0c7e0a9",
+            "descricao": "Beta"
+        },
+        {
+            "id": "1d49da69-eba5-4c1bbc1a-6666554f338a",
+            "descricao": "Omega"
+        }
+    ]
+}
