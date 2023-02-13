@@ -1,24 +1,17 @@
 package com.rodrigo.desafioRest.services;
 
-import org.apache.catalina.User;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
-import com.rodrigo.desafioRest.entities.Office;
+import com.rodrigo.desafioRest.entities.Usuarios;
 
 public class UserService {
-    public User findById(String id){
-
-        String url = "http://localhost:3000";
-        String uri = "/usuarios/{id}";
-
-        User cargo = WebClient
-                .create(url)
-                .get()
-                .uri(uri, id)
-                .retrieve()
-                .bodyToMono(User.class).block();
-
-        return cargo;
-
+	private RestTemplate restTemplate;
+	
+    public UserService(RestTemplate restTemplate){
+    	this.restTemplate = restTemplate;
+    }
+    
+    public Usuarios[] getUsers() {
+    	return restTemplate.getForObject("http://localhost:3000/usuarios", Usuarios[].class);
     }
 }
