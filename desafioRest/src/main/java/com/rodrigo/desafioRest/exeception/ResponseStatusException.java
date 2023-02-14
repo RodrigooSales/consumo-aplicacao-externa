@@ -4,7 +4,11 @@ import org.springframework.http.HttpStatus;
 
 public class ResponseStatusException extends RuntimeException {
 
-    private final HttpStatus status;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final HttpStatus status;
     private final String reason;
 
     public ResponseStatusException(HttpStatus status, String reason) {

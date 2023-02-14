@@ -9,10 +9,10 @@ public class UsuarioService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private final String BASE_URL = "https://exemplo.com/api/usuarios/";
+    private final String BASE_URL = "http://localhost:3000/usuarios/";
 
-    public Usuario buscarUsuarioPorId(Long id) {
-        String url = BASE_URL + id;
+    public Usuario buscarUsuarioPorId(String id) {
+    	String url = BASE_URL + id;
         return restTemplate.getForObject(url, Usuario.class);
     }
 

@@ -45,7 +45,7 @@ public class CargoController {
 	}
 
 	@PostMapping("/{id}/usuarios")
-	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @RequestBody Long usuarioId) {
+	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @RequestBody String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
 		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		cargo.getUsuarios().add(usuario);
@@ -53,7 +53,7 @@ public class CargoController {
 	}
 
 	@DeleteMapping("/{id}/usuarios/{usuarioId}")
-	public Cargo removerUsuarioDoCargo(@PathVariable Long id, @PathVariable Long usuarioId) {
+	public Cargo removerUsuarioDoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
 		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		cargo.getUsuarios().remove(usuario);
