@@ -1,12 +1,12 @@
 package com.rodrigo.desafioRest.entities;
 
-public class Usuarios {
+public class Usuario {
 	private String id;
 	private String name;
-	public Usuarios() {
+	public Usuario() {
 		super();
 	}
-	public Usuarios(String id, String name) {
+	public Usuario(String id, String name) {
 		super();
 		this.id = id;
 		this.name = name;

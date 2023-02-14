@@ -1,50 +1,62 @@
 package com.rodrigo.desafioRest.controller;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.rodrigo.desafioRest.entities.Cargo;
-import com.rodrigo.desafioRest.entities.Usuarios;
+import com.rodrigo.desafioRest.entities.Usuario;
+import com.rodrigo.desafioRest.exeception.ResourceNotFoundException;
 import com.rodrigo.desafioRest.repository.CargoRepository;
-import com.rodrigo.desafioRest.services.UserService;
+import com.rodrigo.desafioRest.services.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/cargos")
+@RequestMapping("/cargos")
 public class CargoController {
+
+	@Autowired
 	private CargoRepository cargoRepository;
-	private UserService userService;
-	
-	public CargoController(CargoRepository cargoRepository, UserService userService) {
-		this.cargoRepository = cargoRepository;
-		this.userService = userService;
-	}
-	
-	@GetMapping
-	public Iterable<Cargo> getCargos(){
-		return cargoRepository.findAll();
-	}
-	
+
+	@Autowired
+	private UsuarioService usuarioService;
+
 	@PostMapping
-	public Cargo createCargo(@RequestBody Cargo cargo) {
+	public Cargo criarCargo(@RequestBody Cargo cargo) {
 		return cargoRepository.save(cargo);
 	}
-	
+
+	@GetMapping("/{id}")
+	public Cargo buscarCargoPorId(@PathVariable Long id) {
+		return cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
+	}
+
 	@PutMapping("/{id}")
-	public Cargo updateCargo(@PathVariable Long id, @RequestBody Cargo cargo) {
-		cargo.setId(id);
+	public Cargo atualizarCargo(@PathVariable Long id, @RequestBody Cargo cargoAtualizado) {
+		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
+		cargo.setName(cargoAtualizado.getName());
+		cargo.setUsuarios(cargoAtualizado.getUsuarios());
 		return cargoRepository.save(cargo);
 	}
-	
+
 	@DeleteMapping("/{id}")
-	public void deleteCargo(@PathVariable Long id) {
-		cargoRepository.deleteById(id);
+	public ResponseEntity<?> deletarCargo(@PathVariable Long id) {
+		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
+		cargoRepository.delete(cargo);
+		return ResponseEntity.ok().build();
 	}
-	
-	
+
+	@PostMapping("/{id}/usuarios")
+	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @RequestBody Long usuarioId) {
+		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
+		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		cargo.getUsuarios().add(usuario);
+		return cargoRepository.save(cargo);
+	}
+
+	@DeleteMapping("/{id}/usuarios/{usuarioId}")
+	public Cargo removerUsuarioDoCargo(@PathVariable Long id, @PathVariable Long usuarioId) {
+		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
+		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		cargo.getUsuarios().remove(usuario);
+		return cargoRepository.save(cargo);
+	}
 }

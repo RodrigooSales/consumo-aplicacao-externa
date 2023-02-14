@@ -18,13 +18,13 @@ public class Cargo{
 	private Long id;
 	private String name;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Usuarios> usuarios;
+	private List<Usuario> usuarios;
 	
 	public Cargo() {
 		super();
 	}
 
-	public Cargo(String name, List<Usuarios> usuarios) {
+	public Cargo(String name, List<Usuario> usuarios) {
 		super();
 		this.name = name;
 		this.usuarios = usuarios;
@@ -46,11 +46,11 @@ public class Cargo{
 		this.name = name;
 	}
 
-	public List<Usuarios> getUsuarios() {
+	public List<Usuario> getUsuarios() {
 		return usuarios;
 	}
 
-	public void setUsuarios(List<Usuarios> usuarios) {
+	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
 	
