@@ -44,10 +44,13 @@ public class CargoController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/{id}/usuarios")
-	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @RequestBody String usuarioId) {
+	@PostMapping("/{id}/usuarios/{usuarioId}")
+	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
-		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		Usuario usuario = new Usuario();
+		usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+
+		usuario.setCargo(cargo);
 		cargo.getUsuarios().add(usuario);
 		return cargoRepository.save(cargo);
 	}

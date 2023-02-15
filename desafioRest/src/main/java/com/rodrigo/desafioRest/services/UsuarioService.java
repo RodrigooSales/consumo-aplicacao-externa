@@ -16,8 +16,4 @@ public class UsuarioService {
         return restTemplate.getForObject(url, Usuario.class);
     }
 
-    public void atualizarUsuario(Usuario usuario) {
-        String url = BASE_URL + usuario.getId();
-        restTemplate.put(url, usuario);
-    }
 }

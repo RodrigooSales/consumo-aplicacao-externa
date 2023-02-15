@@ -1,5 +1,7 @@
 package com.rodrigo.desafioRest.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -25,6 +27,7 @@ public class Usuario implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "cargo_id")
+	@JsonIgnore
 	private Cargo cargo;
 
 	public Usuario() {
