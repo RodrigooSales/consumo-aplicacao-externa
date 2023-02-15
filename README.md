@@ -2,9 +2,9 @@
 
 ## Objetivo do projeto
 
-A ideia do desafio seria criar uma aplicação em spring boot, na qual, exisitira uma simulação de api externa localmente usando Json-Server ou Mockar a aplicação via Postman, onde, exisitiria uma entidade usuarios e departamentos.
+A ideia do desafio seria criar uma aplicação em Spring Boot, na qual, existe uma simulação de api externa localmente usando Json-Server ou Mockar a aplicação via Postman, onde, existe uma entidade usuários e departamentos. 
 
-O objetivo do projeto então seria criar um serviço REST que consumiria essa api externa criando assim, uma entidade Cargos e nessa entidade Cargos seria salvo os usuarios e para cada usuario seria associado um cargo.
+O objetivo do projeto então seria criar um serviço REST que consumiria essa api externa criando assim, uma entidade Cargos e nessa entidade Cargos seria salvo os usuários e para cada usuário seria associado um cargo. 
 
 ## O que foi solicitado e requisitado
 
@@ -19,33 +19,68 @@ padrões de projeto.
 
 ## Funcionamento do projeto
 
-O projeto foi feito usando java(Versão 17) com springboot na versão 2.7.8 salvando os usuarios em um banco de dados H2 em memoria usando o JPA e RestTemplate como ferramentas de contribuição para a criação do projeto.
+O projeto foi feito usando Java(Versão 17) com Spring boot na versão 2.7.8 salvando os usuários em um banco de dados H2 em memória usando o JPA e RestTemplate como ferramentas de contribuição para a criação do projeto. 
 
 ### Divisão do projeto:
+ 
+O projeto ele foi dividido da seguinte forma: 
 
-O projeto ele foi dividido da seguinte forma:
-    
-    Pacote Controller -> ele possui a classe CargoController, responsavel pelo CRUD dos recursos relacionados a entidade cargo.
+    Pacote Controller -> ele possui a classe CargoController, responsável pelo CRUD dos recursos relacionados a entidade cargo. 
 
-    Pacote Entities -> ele possui as entidades relacionadas a Cargos e Usuarios.
+    Pacote Entities -> ele possui as entidades relacionadas a Cargos e Usuários. 
 
-    Pacote Repository -> ele possui a interface que implementa o JpaRepository.
+    Pacote Repository -> ele possui a interface que implementa o JpaRepository. 
 
-    Pacote Services -> ele possui a classe responsavel pelo consumo de usuarios da api externa.
+    Pacote Services -> ele possui a classe responsável pelo consumo de usuários da api externa. 
 
-    Pacote Exeception -> ele possui as classes relacionadas ao tratamento de execeções do projeto.
+    Pacote Exeception -> ele possui as classes relacionadas ao tratamento de exceções do projeto. 
 
-    Arquivo de propiedades -> ele possui as configurações de banco de dados H2
+    Arquivo de propriedades -> ele possui as configurações de banco de dados H2 
 
 ### Entidades usadas
 
-Foram usadas duas entidades na aplicação. Primeiro a Entidade Cargo, que recebe um id do tipo Long, um nome e uma lista de usuarios. A segunda Entidade Usuario ela possui um id e um nome que são recebidos da api externa e possui tambem um objeto cargo. Nas entidades Cargo e Usuario foi necessaria a utilização das anotações @OneToMany e @ManyToONe
+Foram usadas duas entidades na aplicação. Primeiro a Entidade Cargo, que recebe um id do tipo Long, um nome e uma lista de usuários. A segunda Entidade Usuário ela possui um id e um nome que são recebidos da api externa e possui também um objeto cargo. Nas entidades Cargo e Usuário foi necessária a utilização das anotações @OneToMany e @ManyToONe usadas para mapear o relacionamento entre as duas entidades citadas no banco H2 em memória.
 
+Toda via a Entidade Usuário recebe a anotação @JoinColumn para vincular a coluna de junção que associa à entidade Cargo, além disso, ela utiliza a anotação @JsonIgnore para evitar o erro de referência cíclica. 
+
+Entidade Usuario:
+``` java
+@Entity
+@Table
+public class Usuario implements Serializable{
+	private static final long serialVersionUID = 1L;
+	@Id
+	@Column
+	private String id;
+	@Column
+	private String name;	
+	@ManyToOne
+	@JoinColumn(name = "cargo_id")
+	@JsonIgnore
+	private Cargo cargo;
+	//getters, setters e contructores
+```
+
+Entidade Cargo:
+``` java
+@Entity
+@Table
+public class Cargo implements Serializable{
+	private static final long serialVersionUID = 1L;
+	@Id
+	@Column
+	private Long id;
+	@Column
+	private String name;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Usuario> usuarios;
+	//getters, setters e contructores
+```
 ### Funcionamento da classe CargoController:
 
-A classe CargoController como dito anteriormente é responsavel pelo CRUD dos recursos relacionados aos cargos, ou seja, criação de cargos, leitura de cargo, atualização de cargos e remoção de cargos salvos no banco de dados.
+A classe CargoController como dito anteriormente é responsável pelo CRUD dos recursos relacionados aos cargos, ou seja, criação de cargos, leitura de cargo, atualização de cargos e remoção de cargos salvos no banco de dados. 
 
-O primeiro metodo da classe CargoController é o metodo que cria cargo, no qual, é passado as informações no body da requisição da aplicação
+O primeiro método da classe CargoController é o método que cria cargo, no qual, é passado as informações no body da requisição da aplicação. 
 
 ``` java
 public Cargo criarCargo(@RequestBody Cargo cargo) {
@@ -106,4 +141,24 @@ E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a 
 		cargo.getUsuarios().remove(usuario);
 		return cargoRepository.save(cargo);
 	}
+```
+
+### Funcionamento da classe UsuarioService:
+
+A classe usuario service foi implementada para buscar os usuarios da api externa e utiliza somente a dependencia RestTemplate para o mesmo, nela é passada a URL base da api e no metodo buscarUsuarioPorId é passado o id que foi passado no path da requisição.
+
+``` java
+@Service
+public class UsuarioService {
+
+    private RestTemplate restTemplate = new RestTemplate();
+
+    private final String BASE_URL = "http://localhost:3000/usuarios/";
+
+    public Usuario buscarUsuarioPorId(String id) {
+    	String url = BASE_URL + id;
+        return restTemplate.getForObject(url, Usuario.class);
+    }
+
+}
 ```
