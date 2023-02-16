@@ -41,7 +41,7 @@ O projeto ele foi dividido da seguinte forma:
 
 Foram usadas duas entidades na aplicação. Primeiro a Entidade Cargo, que recebe um id do tipo Long, um nome e uma lista de usuários. A segunda Entidade Usuário ela possui um id e um nome que são recebidos da api externa e possui também um objeto cargo. Nas entidades Cargo e Usuário foi necessária a utilização das anotações @OneToMany e @ManyToONe usadas para mapear o relacionamento entre as duas entidades citadas no banco H2 em memória.
 
-Toda via a Entidade Usuário recebe a anotação @JoinColumn para vincular a coluna de junção que associa à entidade Cargo, além disso, ela utiliza a anotação @JsonIgnore para evitar o erro de referência cíclica. 
+Toda via a Entidade Usuário e Cargo recebem a anotação @JoinColumn para vincular a coluna de junção que associa as duas, além disso, a entidade Usuario utiliza a anotação @JsonIgnore para evitar o erro de referência cíclica. 
 
 Entidade Usuario:
 ``` java
@@ -88,7 +88,8 @@ A classe CargoController como dito anteriormente é responsável pelo CRUD dos r
 O primeiro método da classe CargoController é o método que cria cargo, no qual, é passado as informações no body da requisição da aplicação. 
 
 ``` java
-public Cargo criarCargo(@RequestBody Cargo cargo) {
+	@PostMapping
+	public Cargo criarCargo(@RequestBody Cargo cargo) {
 		return cargoRepository.save(cargo);
 	}    
 ```
