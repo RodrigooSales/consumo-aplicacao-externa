@@ -49,11 +49,13 @@ Entidade Usuario:
 @Table
 public class Usuario implements Serializable{
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@Column
 	private String id;
 	@Column
 	private String name;	
+	
 	@ManyToOne
 	@JoinColumn(name = "cargo_id")
 	@JsonIgnore
@@ -67,12 +69,15 @@ Entidade Cargo:
 @Table
 public class Cargo implements Serializable{
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@Column
 	private Long id;
 	@Column
 	private String name;
+	
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="cargo_id")
 	private List<Usuario> usuarios;
 	//getters, setters e contructores
 ```
