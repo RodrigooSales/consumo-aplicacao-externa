@@ -27,6 +27,7 @@ public class Cargo implements Serializable{
 	private String name;
 	
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="cargo_id")
 	private List<Usuario> usuarios;
 	
 	public Cargo() {
