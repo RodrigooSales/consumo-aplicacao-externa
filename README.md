@@ -120,32 +120,46 @@ O quarto metodo seria o de deletar um cargo, que segue a mesma ideia dos 2 anter
 	}
 ```
 
-E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a um cargo, nos quais, eles buscam os usuarios via id da api externa e adicionando ou deletando os mesmos
+E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a um cargo, nos quais, eles buscam os usuarios via id da api externa e adicionando ou deletando os mesmos. Porem eles tratam 2 exceções importantissimas para o funcionamento da aplicação, eles possuem a UserNotFoundException que trata o fato de o usuario existir ou não e possuem a ExternalApiUnavailableException que trata o fato da api externa estar indisponivel para a consulta.
 
 ``` java
     @PostMapping("/{id}/usuarios/{usuarioId}")
-	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
+	public ResponseEntity<Cargo> adicionarUsuarioAoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
-		Usuario usuario = new Usuario();
-		usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		Usuario usuario;
+		try {
+			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		}catch (HttpServerErrorException | HttpClientErrorException ex){
+			throw new ExternalApiUnavailableException("API externa indisponível");
+		} catch (Exception ex) {
+			throw new UserNotFoundException("Usuário não encontrado");
+		}
 
 		usuario.setCargo(cargo);
 		cargo.getUsuarios().add(usuario);
-		return cargoRepository.save(cargo);
+		return ResponseEntity.ok(cargoRepository.save(cargo));
 	}
 
 	@DeleteMapping("/{id}/usuarios/{usuarioId}")
-	public Cargo removerUsuarioDoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
+	public ResponseEntity<Cargo> removerUsuarioDoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
-		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		Usuario usuario;
+		try {
+			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		} catch (HttpServerErrorException | HttpClientErrorException ex) {
+			throw new ExternalApiUnavailableException("API externa indisponível");
+		} catch (Exception ex) {
+			throw new UserNotFoundException("Usuário não encontrado");
+		}
+
 		cargo.getUsuarios().remove(usuario);
-		return cargoRepository.save(cargo);
+		return ResponseEntity.ok(cargoRepository.save(cargo));
 	}
 ```
 
 ### Funcionamento da classe UsuarioService:
 
-A classe usuario service foi implementada para buscar os usuarios da api externa e utiliza somente a dependencia RestTemplate para o mesmo, nela é passada a URL base da api e no metodo buscarUsuarioPorId é passado o id que foi passado no path da requisição.
+A classe usuario service foi implementada para buscar os usuarios da api externa e utiliza somente a dependencia RestTemplate para o mesmo, nela é passada a URL base da api e no metodo buscarUsuarioPorId é passado o id que foi passado no path da requisição. E aqui tambem são tratas as exceções que vimos no CargoController e instaciamos a nossa exceção usando a exceção HttpClientErrorException que é lançada quando uma chamada HTTP não for processada com sucesso pelo servidor da aplicação externa.
 
 ``` java
 @Service
@@ -157,8 +171,20 @@ public class UsuarioService {
 
     public Usuario buscarUsuarioPorId(String id) {
     	String url = BASE_URL + id;
-        return restTemplate.getForObject(url, Usuario.class);
+        try {
+            return restTemplate.getForObject(url, Usuario.class);
+        } catch (RestClientException e){
+            if (e instanceof HttpClientErrorException) {
+                HttpClientErrorException ex = (HttpClientErrorException) e;
+                if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    throw new UserNotFoundException("Usuário não encontrado com id " + id);
+                }
+            }
+            throw new ExternalApiUnavailableException("API externa indisponível");
+        }
+
     }
 
 }
+
 ```

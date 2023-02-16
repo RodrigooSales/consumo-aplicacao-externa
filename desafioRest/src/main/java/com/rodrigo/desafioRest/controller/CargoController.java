@@ -2,12 +2,16 @@ package com.rodrigo.desafioRest.controller;
 
 import com.rodrigo.desafioRest.entities.Cargo;
 import com.rodrigo.desafioRest.entities.Usuario;
+import com.rodrigo.desafioRest.exeception.ExternalApiUnavailableException;
 import com.rodrigo.desafioRest.exeception.ResourceNotFoundException;
+import com.rodrigo.desafioRest.exeception.UserNotFoundException;
 import com.rodrigo.desafioRest.repository.CargoRepository;
 import com.rodrigo.desafioRest.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 @RestController
 @RequestMapping("/cargos")
@@ -45,21 +49,35 @@ public class CargoController {
 	}
 
 	@PostMapping("/{id}/usuarios/{usuarioId}")
-	public Cargo adicionarUsuarioAoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
+	public ResponseEntity<Cargo> adicionarUsuarioAoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
-		Usuario usuario = new Usuario();
-		usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		Usuario usuario;
+		try {
+			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		}catch (HttpServerErrorException | HttpClientErrorException ex){
+			throw new ExternalApiUnavailableException("API externa indisponível");
+		} catch (Exception ex) {
+			throw new UserNotFoundException("Usuário não encontrado");
+		}
 
 		usuario.setCargo(cargo);
 		cargo.getUsuarios().add(usuario);
-		return cargoRepository.save(cargo);
+		return ResponseEntity.ok(cargoRepository.save(cargo));
 	}
 
 	@DeleteMapping("/{id}/usuarios/{usuarioId}")
-	public Cargo removerUsuarioDoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
+	public ResponseEntity<Cargo> removerUsuarioDoCargo(@PathVariable Long id, @PathVariable String usuarioId) {
 		Cargo cargo = cargoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com id " + id));
-		Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		Usuario usuario;
+		try {
+			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+		} catch (HttpServerErrorException | HttpClientErrorException ex) {
+			throw new ExternalApiUnavailableException("API externa indisponível");
+		} catch (Exception ex) {
+			throw new UserNotFoundException("Usuário não encontrado");
+		}
+
 		cargo.getUsuarios().remove(usuario);
-		return cargoRepository.save(cargo);
+		return ResponseEntity.ok(cargoRepository.save(cargo));
 	}
 }
