@@ -194,3 +194,24 @@ public class UsuarioService {
 }
 
 ```
+
+## Questionamentos
+
+1. O que acontecerá se a API externa fornecida no desafio ficar indisponível?
+
+RESPOSTA: Caso a API externa ficasse indisponível a requisição irá retornar um erro 404.
+
+2. Descreva (no README) o que poderá ocorrer caso um usuário ou um departamento seja
+deletado da API externa.
+
+RESPOSTA: Da mesma forma que na pergunta anterior a requisição irá retornar um erro 404.
+
+3. Supondo que a API externa estivesse disponível em um provedor cloud, quais
+considerações, recomendações e melhorias você indicaria?
+
+RESPOSTA: 
+
+* Utilizar um balanceador de carga para distribuir as requisições entre várias instâncias da API externa, garantindo assim que a carga seja distribuída de forma uniforme e que a aplicação não fique dependente de um único servidor.
+* Configurar a aplicação para usar cache, evitando assim que sejam realizadas requisições desnecessárias à API externa e melhorando a performance geral da aplicação.
+* Utilizar ferramentas de monitoramento e alerta, como o New Relic para detectar rapidamente eventuais problemas de performance ou disponibilidade da API externa.
+* Utilizar uma solução de auto-scaling para aumentar ou diminuir o número de instâncias de nossa aplicação, de acordo com a carga de requisições recebida.
