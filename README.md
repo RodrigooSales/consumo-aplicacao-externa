@@ -199,12 +199,12 @@ public class UsuarioService {
 
 1. O que acontecerá se a API externa fornecida no desafio ficar indisponível?
 
-RESPOSTA: Caso a API externa ficasse indisponível a requisição irá retornar um erro 404.
+RESPOSTA: Caso a API externa ficasse indisponível a requisição irá retornar um erro 503 Service Unavailable.
 
 2. Descreva (no README) o que poderá ocorrer caso um usuário ou um departamento seja
 deletado da API externa.
 
-RESPOSTA: Da mesma forma que na pergunta anterior a requisição irá retornar um erro 404.
+RESPOSTA: De forma semalhante a resposta anterior caso o usuario não exista a requisição ira retornar um erro 404 Not Found.
 
 3. Supondo que a API externa estivesse disponível em um provedor cloud, quais
 considerações, recomendações e melhorias você indicaria?
