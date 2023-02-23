@@ -55,9 +55,9 @@ public class CargoController {
 		try {
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		}catch (HttpServerErrorException | HttpClientErrorException ex){
-			throw new ExternalApiUnavailableException("API externa indisponível");
-		} catch (Exception ex) {
 			throw new UserNotFoundException("Usuário não encontrado");
+		} catch (Exception ex) {
+			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
 		usuario.setCargo(cargo);
@@ -72,9 +72,9 @@ public class CargoController {
 		try {
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			throw new ExternalApiUnavailableException("API externa indisponível");
-		} catch (Exception ex) {
 			throw new UserNotFoundException("Usuário não encontrado");
+		} catch (Exception ex) {
+			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
 		cargo.getUsuarios().remove(usuario);
