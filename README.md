@@ -136,9 +136,9 @@ E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a 
 		try {
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		}catch (HttpServerErrorException | HttpClientErrorException ex){
-			throw new ExternalApiUnavailableException("API externa indisponível");
-		} catch (Exception ex) {
 			throw new UserNotFoundException("Usuário não encontrado");
+		} catch (Exception ex) {
+			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
 		usuario.setCargo(cargo);
@@ -153,9 +153,9 @@ E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a 
 		try {
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			throw new ExternalApiUnavailableException("API externa indisponível");
-		} catch (Exception ex) {
 			throw new UserNotFoundException("Usuário não encontrado");
+		} catch (Exception ex) {
+			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
 		cargo.getUsuarios().remove(usuario);
