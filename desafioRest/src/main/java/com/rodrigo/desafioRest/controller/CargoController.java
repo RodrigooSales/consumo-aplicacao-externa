@@ -56,7 +56,7 @@ public class CargoController {
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		}catch (HttpServerErrorException | HttpClientErrorException ex){
 			throw new UserNotFoundException("Usuário não encontrado");
-		} catch (Exception ex) {
+		} catch (ExternalApiUnavailableException ex) {
 			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
@@ -73,7 +73,7 @@ public class CargoController {
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
 			throw new UserNotFoundException("Usuário não encontrado");
-		} catch (Exception ex) {
+		} catch (ExternalApiUnavailableException ex) {
 			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
