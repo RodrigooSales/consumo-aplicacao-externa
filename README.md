@@ -137,7 +137,7 @@ E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a 
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		}catch (HttpServerErrorException | HttpClientErrorException ex){
 			throw new UserNotFoundException("Usuário não encontrado");
-		} catch (Exception ex) {
+		} catch (ExternalApiUnavailableException ex) {
 			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
@@ -154,7 +154,7 @@ E por fim os 2 ultimos metodos que adcionam e deletam um usuario em relação a 
 			usuario = usuarioService.buscarUsuarioPorId(usuarioId);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
 			throw new UserNotFoundException("Usuário não encontrado");
-		} catch (Exception ex) {
+		} catch (ExternalApiUnavailableException ex) {
 			throw new ExternalApiUnavailableException("API externa indisponível");
 		}
 
